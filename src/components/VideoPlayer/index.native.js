@@ -102,6 +102,7 @@ const VideoPlayer = () => {
           ref={videoRef}
           source={{ uri: 'https://imagecdn.99acres.com/loanTest/Horizontal_compressed.mp4' }}
           style={styles.backgroundVideo}
+          autoplay={true}
           paused={isPaused}
           controls={false}
           muted={true}

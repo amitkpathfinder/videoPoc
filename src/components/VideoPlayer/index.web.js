@@ -9,7 +9,7 @@ const VideoPlayer = (props) => {
     const videoRef = useRef(null);
     const { id } = props;
 
-    const [isPaused, setIsPaused] = useState(true);
+    const [isPaused, setIsPaused] = useState(false);
     const [showControls, setShowControls] = useState(false);
     const [showSeekIndicator, setShowSeekIndicator] = useState(null); // Shows seek direction and time
     const [progress, setProgress] = useState(0); // For seekbar progress
