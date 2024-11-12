@@ -5,18 +5,22 @@ import {
   ActivityIndicator, 
   Dimensions, 
   TouchableOpacity,
-  TouchableWithoutFeedback, 
-  Image
+  TouchableWithoutFeedback 
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Video from 'react-native-video';
 import { Maximize2, PauseCircle, PlayCircle } from 'lucide-react-native';
 
-const SEEK_TIME = 10; // Time in seconds to seek on double tap
-const DOUBLE_TAP_DELAY = 300; // Delay to detect double tap in milliseconds
-const ICON_TIMEOUT = 3000; // Time in milliseconds to hide the icons
+const SEEK_TIME = 10; 
+const DOUBLE_TAP_DELAY = 300; 
+const ICON_TIMEOUT = 3000; 
 
-const VideoPlayer = () => {
+const VideoPlayer = ({
+  src,
+  onEnded,
+  onDoubleTapSeekForward,
+  onDoubleTapSeekBackward
+}) => {
   const [isPaused, setIsPaused] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -26,15 +30,12 @@ const VideoPlayer = () => {
 
   const videoRef = useRef(null);
   const lastTapRef = useRef(0);
-  const lastTapTimeoutRef = useRef(null);
   const controlTimeoutRef = useRef(null);
 
   useEffect(() => {
     if (showControls) {
-      // Hide controls after ICON_TIMEOUT
       controlTimeoutRef.current = setTimeout(() => setShowControls(false), ICON_TIMEOUT);
     }
-
     return () => clearTimeout(controlTimeoutRef.current);
   }, [showControls]);
 
@@ -63,25 +64,19 @@ const VideoPlayer = () => {
 
   const handleDoubleTap = (side) => {
     const now = Date.now();
-
     if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
-      if (lastTapTimeoutRef.current) {
-        clearTimeout(lastTapTimeoutRef.current);
-      }
-
       const seekTime = side === 'left' ? -SEEK_TIME : SEEK_TIME;
       const newTime = Math.max(0, Math.min(duration, currentTime + seekTime));
-      
-      if (videoRef.current) {
-        videoRef.current.seek(newTime);
+      videoRef.current.seek(newTime);
+
+      // Callbacks for seeking in stories
+      if (side === 'left' && onDoubleTapSeekBackward) {
+        onDoubleTapSeekBackward();
+      } else if (side === 'right' && onDoubleTapSeekForward) {
+        onDoubleTapSeekForward();
       }
     }
-
     lastTapRef.current = now;
-
-    lastTapTimeoutRef.current = setTimeout(() => {
-      lastTapRef.current = 0;
-    }, DOUBLE_TAP_DELAY);
   };
 
   const toggleFullscreen = () => {
@@ -100,37 +95,33 @@ const VideoPlayer = () => {
       <View style={styles.videoContainer}>
         <Video
           ref={videoRef}
-          source={{ uri: 'https://imagecdn.99acres.com/loanTest/Horizontal_compressed.mp4' }}
+          source={{ uri: src }}
           style={styles.backgroundVideo}
-          autoplay={true}
+          autoplay
           paused={isPaused}
           controls={false}
-          muted={true}
+          muted
           resizeMode="cover"
           onBuffer={handleBuffer}
           onLoad={onLoad}
           onProgress={onProgress}
-          onEnd={() => console.log('The Video is finished playing.')}
+          onEnd={onEnded}
           onFullscreenPlayerWillPresent={() => setIsFullscreen(true)}
           onFullscreenPlayerWillDismiss={() => setIsFullscreen(false)}
         />
         
-        {/* Left side double tap area */}
         <TouchableWithoutFeedback onPress={() => handleDoubleTap('left')}>
           <View style={styles.touchableLeftSide} />
         </TouchableWithoutFeedback>
 
-        {/* Right side double tap area */}
         <TouchableWithoutFeedback onPress={() => handleDoubleTap('right')}>
           <View style={styles.touchableRightSide} />
         </TouchableWithoutFeedback>
 
-        {/* Center play/pause area */}
         <TouchableOpacity 
           style={styles.centerContainer} 
           onPress={handleVideoPress}
-          activeOpacity={1}
-        >
+          activeOpacity={1}>
           {showControls && (
             <View style={styles.playPauseIcon}>
               {isPaused ? (
@@ -179,8 +170,8 @@ const VideoPlayer = () => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: Dimensions.get('window').height / 2,
-    backgroundColor: 'white'
+    height: Dimensions.get('window').height,
+    backgroundColor: 'white',
   },
   videoContainer: {
     flex: 1,
@@ -211,7 +202,6 @@ const styles = StyleSheet.create({
     left: '30%',
     width: '40%',
     height: '100%',
-    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },

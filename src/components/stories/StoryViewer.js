@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'black',
+        
     },
     progressContainer: {
         flexDirection: 'row',
@@ -71,12 +72,15 @@ const styles = StyleSheet.create({
         top: 20,
         width: '100%',
         height: 5,
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex:1000,
+        height:16,
     },
     progressBar: {
-        flex: 1,
-        height: '100%',
+        borderRadius:10,
+        height: 4,
         backgroundColor: 'white',
+        margin:5
     },
 });
 

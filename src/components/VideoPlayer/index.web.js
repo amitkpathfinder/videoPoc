@@ -1,13 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
+import Hls from 'hls.js';
+
 const SEEK_TIME = 10; // Time in seconds to seek on double tap
 const ICON_TIMEOUT = 3000; // Time in milliseconds to hide the icons
 const SEEK_INDICATOR_TIMEOUT = 800; // Time to show seek indicator
 
-const VideoPlayer = (props) => {
+const VideoPlayer = ({
+    id,
+    src,
+    onEnded,
+    onDoubleTapSeekForward,
+    onDoubleTapSeekBackward,
+    }) => {
     const videoRef = useRef(null);
-    const { id } = props;
+    // const { id } = props;
 
     const [isPaused, setIsPaused] = useState(false);
     const [showControls, setShowControls] = useState(false);
@@ -30,15 +38,32 @@ const VideoPlayer = (props) => {
     const handleDoubleTapSeek = (direction) => {
         const now = Date.now();
         if (now - lastTap.current < 300) {
-            const seekTime = direction === 'forward' ? SEEK_TIME : -SEEK_TIME;
-            const newTime = Math.max(0, videoRef.current.currentTime + seekTime);
-            videoRef.current.currentTime = newTime;
-
-            setShowSeekIndicator(`Seek ${direction} ${SEEK_TIME}s`);
-            setTimeout(() => setShowSeekIndicator(null), SEEK_INDICATOR_TIMEOUT);
+            if (direction === 'forward' && onDoubleTapSeekForward) {
+                onDoubleTapSeekForward();
+            } else if (direction === 'backward' && onDoubleTapSeekBackward) {
+                onDoubleTapSeekBackward();
+            }
         }
         lastTap.current = now;
     };
+
+    useEffect(() => {
+        if (videoRef.current) {
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(src); // `src` should be the HLS (.m3u8) file URL
+                hls.attachMedia(videoRef.current);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    videoRef.current.play();
+                });
+            } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
+                videoRef.current.src = src;
+                videoRef.current.addEventListener('loadedmetadata', () => {
+                    videoRef.current.play();
+                });
+            }
+        }
+    }, [src, videoRef]);
 
     // Auto play/pause based on state change
     useEffect(() => {
@@ -71,7 +96,20 @@ const VideoPlayer = (props) => {
 
     return (
         <View style={styles.container}>
-            {/* Left and right areas for double tap seek */}
+            <video
+                ref={videoRef}
+                id={id}
+                src={src}
+                autoPlay
+                playsInline
+                muted
+                preload="auto"
+                width="100%"
+                onEnded={onEnded}
+                onClick={handleVideoClick}
+                style={styles.video}
+            />
+            {/* Double-tap handlers */}
             <div
                 style={styles.touchableLeftSide}
                 onClick={() => handleDoubleTapSeek('backward')}
@@ -80,21 +118,6 @@ const VideoPlayer = (props) => {
                 style={styles.touchableRightSide}
                 onClick={() => handleDoubleTapSeek('forward')}
             />
-
-            {/* Video Element */}
-            <video
-                ref={videoRef}
-                id={id}
-                autoPlay
-                playsInline
-                muted
-                preload="auto"
-                width="100%"
-                onClick={handleVideoClick}
-                style={styles.video}
-            >
-                <source src="https://imagecdn.99acres.com/loanTest/Horizontal_compressed.mp4" type="video/mp4" />
-            </video>
 
             {/* Seek Indicator */}
             {showSeekIndicator && (
