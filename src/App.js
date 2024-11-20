@@ -1,13 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
-import Stories from './components/stories/Stories';
-// import VideoPlayer from './components/VideoPlayer';
+import { View, Text } from 'react-native';
+import VideoOverlay from './components/VideoOverlay/VideoOverlay';
 
 const App = () => {
-
   return (
     <View style={{height:'100%'}}>
-        <Stories />
+        <VideoOverlay />
     </View>
   );
 };
