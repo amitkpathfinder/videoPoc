@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, PanResponder } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Dimensions, PanResponder } from 'react-native';
 import VideoWrapper from './Wrapper/VideoWrapper';
 // import backendData from './backend.json'; // Ensure the path to backend.json is correct
 
 // const { width } = Dimensions.get('window');
 
 const VideoOverlay = () => {
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
   const [videoDuration, setVideoDuration] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -17,6 +18,7 @@ const VideoOverlay = () => {
   // }, []);
 
   useEffect(() => {
+    console.log('VideoOverlay:Loading video list');
     const fetchVideos = async () => {
         const response = await fetch('http://10.112.4.67:8080/backend.json');
         const data = await response.json();
@@ -26,6 +28,8 @@ const VideoOverlay = () => {
 }, []);
 
   const togglePlayPause = () => setPaused((prev) => !prev);
+  const toggleFullscreen = () => setFullscreen((prev) => !prev);
+
 
   const handleSwipe = (direction) => {
     if (direction === 'left' && currentIndex < videos.length - 1) {
@@ -54,15 +58,19 @@ const VideoOverlay = () => {
     return <Text>Loading...</Text>;
   }
 
+
   const currentVideo = videos[currentIndex];
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
+    <View style={[styles.container, fullscreen ? styles.containerFull : '']} {...panResponder.panHandlers}>
+      
       {/* Video Player */}
       <VideoWrapper
         src={currentVideo.video}
+        poster={currentVideo.poster}
         onDurationChange={setVideoDuration}
-        Paused={paused}
+        paused={paused}
+        fullscreen={fullscreen}
       />
 
       {/* Overlay Controls */}
@@ -75,6 +83,9 @@ const VideoOverlay = () => {
         <View style={styles.controls}>
           <TouchableOpacity onPress={togglePlayPause}>
             <Text style={styles.controlText}>{paused ? 'Play' : 'Pause'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleFullscreen}>
+            <Text style={styles.controlText}>{fullscreen ? 'Exit Fullscreen' : 'Go FullScreen'}</Text>
           </TouchableOpacity>
           <Text style={styles.controlText}>Duration: {videoDuration.toFixed(2)} seconds</Text>
         </View>
@@ -103,8 +114,13 @@ const VideoOverlay = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#000',
+    // flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    height:500,
+    position: 'relative',
+  },
+  containerFull:{
+    height:'100%',
   },
   overlayBox: {
     position: 'absolute',

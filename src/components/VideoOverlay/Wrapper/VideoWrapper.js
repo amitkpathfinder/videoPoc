@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import VideoPlayer from '../Player';
 
-const VideoWrapper = ({Paused=false, onDurationChange, src}) => {
+const VideoWrapper = ({paused=false, fullscreen=false,  onDurationChange, src, poster}) => {
   
-  const [isPaused, setIsPaused] = useState(Paused);
-  const [isBuffering, setIsBuffering] = useState(false);
+  const [isPaused, setIsPaused] = useState(paused);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(fullscreen);
   const [showControls, setShowControls] = useState(true);
 
   useEffect(() => {
-    setIsPaused(Paused);
-    console.log('VideoWrapper', Paused);
-  }, [Paused]);
-
-  const handleTogglePlayPause = (paused) => setIsPaused(paused);
-
-  const handleBuffer = ({ isBuffering }) => setIsBuffering(isBuffering);
+    console.log('VideoWrapper:Loading video list');
+    setIsPaused(paused);
+    setIsFullscreen(fullscreen);
+    console.log('VideoWrapper', paused);
+  }, [paused, fullscreen]);
 
   const handleLoad = ({ duration }) => {
     setDuration(duration);
@@ -45,14 +42,12 @@ const VideoWrapper = ({Paused=false, onDurationChange, src}) => {
   return (
     <VideoPlayer
       src={src}
+      poster={poster}
       isPaused={isPaused}
-      isBuffering={isBuffering}
       duration={duration}
       currentTime={currentTime}
       isFullscreen={isFullscreen}
       showControls={showControls}
-      onTogglePlayPause={handleTogglePlayPause}
-      onBuffer={handleBuffer}
       onLoad={handleLoad}
       onProgress={handleProgress}
       onSeek={handleSeek}

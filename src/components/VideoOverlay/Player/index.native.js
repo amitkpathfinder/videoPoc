@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { 
   View, 
+  Text,
   StyleSheet, 
   ActivityIndicator, 
   Dimensions, 
@@ -14,13 +15,11 @@ import { Maximize2, PauseCircle, PlayCircle } from 'lucide-react-native';
 const VideoPlayer = ({
   src,
   isPaused,
-  isBuffering,
+  poster,
   duration,
   currentTime,
   isFullscreen,
   showControls,
-  onTogglePlayPause,
-  onBuffer,
   onLoad,
   onProgress,
   onSeek,
@@ -30,7 +29,7 @@ const VideoPlayer = ({
   onEnded,
 }) => {
   const videoRef = useRef(null);
-
+console.log('posterUrl',poster);
   // useEffect(() => {
   //   if (showControls && onTogglePlayPause) {
   //     const timeout = setTimeout(() => onTogglePlayPause(false), 3000);
@@ -47,21 +46,27 @@ const VideoPlayer = ({
   // };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isFullscreen ? styles.containerFull : '']}>
       <View style={styles.videoContainer}>
         <Video
           ref={videoRef}
           source={{ uri: src }}
           onLoad={(e) => onLoad({ duration: e.duration })}
-          style={styles.backgroundVideo}
+          style={[styles.backgroundVideo, isFullscreen ? styles.backgroundVideoFull:'']}
           autoplay
           paused={isPaused}
           controls={false}
+          // fullscreen={isFullscreen}
           muted
           // repeat
           resizeMode="cover"
-          onBuffer={onBuffer}
+          // onBuffer={onBuffer}
           // onLoad={onLoad}
+          // renderLoader={<Text>loading...</Text>}
+          poster={{
+            source: { uri: poster },
+            resizeMode: "cover",
+          }}
           onProgress={onProgress}
           onEnd={onEnded}
           onFullscreenPlayerWillPresent={() => onToggleFullscreen(true)}
@@ -128,8 +133,11 @@ const VideoPlayer = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: Dimensions.get('window').height,
+    height: '100%',
     backgroundColor: 'white',
+  },
+  containerFull: {
+    height: '100%',
   },
   videoContainer: {
     flex: 1,
@@ -137,6 +145,9 @@ const styles = StyleSheet.create({
   },
   backgroundVideo: {
     width: '100%',
+    height: '100%',
+  },
+  backgroundVideoFull: {
     height: '100%',
   },
   touchableLeftSide: {

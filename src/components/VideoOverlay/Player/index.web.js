@@ -6,6 +6,7 @@ const VideoPlayer = ({
   id,
   src,
   isPaused,
+  poster,
   onLoad,
   showControls,
   showSeekIndicator,
@@ -117,6 +118,7 @@ const VideoPlayer = ({
         ref={videoRef}
         id={id}
         src={src}
+        controls={false}
         autoPlay
         playsInline
         muted
