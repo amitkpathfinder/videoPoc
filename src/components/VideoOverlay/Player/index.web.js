@@ -118,12 +118,12 @@ const VideoPlayer = ({
         ref={videoRef}
         id={id}
         src={src}
+        poster={poster}
         controls={false}
         autoPlay
         playsInline
         muted
         preload="auto"
-        width="100%"
         onLoadedMetadata={handleMetadataLoaded} 
         onEnded={onEnded}
         onClick={handleVideoClick}
@@ -173,10 +173,12 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     justifyContent: 'center',
+    height: '100%',
   },
   video: {
     cursor: 'pointer',
     width: '100%',
+    height: '100%',
   },
   controls: {
     position: 'absolute',

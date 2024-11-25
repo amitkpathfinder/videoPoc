@@ -46,26 +46,26 @@ console.log('posterUrl',poster);
   // };
 
   return (
-    <View style={[styles.container, isFullscreen ? styles.containerFull : '']}>
+    <View style={styles.container}>
       <View style={styles.videoContainer}>
         <Video
           ref={videoRef}
           source={{ uri: src }}
           onLoad={(e) => onLoad({ duration: e.duration })}
-          style={[styles.backgroundVideo, isFullscreen ? styles.backgroundVideoFull:'']}
+          style={styles.backgroundVideo}
           autoplay
           paused={isPaused}
           controls={false}
           // fullscreen={isFullscreen}
           muted
           // repeat
-          resizeMode="cover"
+          resizeMode="none"
           // onBuffer={onBuffer}
           // onLoad={onLoad}
           // renderLoader={<Text>loading...</Text>}
           poster={{
             source: { uri: poster },
-            resizeMode: "cover",
+            // resizeMode: "cover",
           }}
           onProgress={onProgress}
           onEnd={onEnded}
@@ -134,22 +134,18 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
   },
-  containerFull: {
-    height: '100%',
-  },
+ 
   videoContainer: {
-    flex: 1,
+    width: '100%',
     position: 'relative',
   },
   backgroundVideo: {
     width: '100%',
     height: '100%',
   },
-  backgroundVideoFull: {
-    height: '100%',
-  },
+
   touchableLeftSide: {
     position: 'absolute',
     left: 0,
