@@ -3,6 +3,7 @@ import {
   View, 
   Text,
   StyleSheet, 
+  Platform,
   ActivityIndicator, 
   Dimensions, 
   TouchableOpacity,
@@ -63,10 +64,11 @@ console.log('posterUrl',poster);
           // onBuffer={onBuffer}
           // onLoad={onLoad}
           // renderLoader={<Text>loading...</Text>}
-          poster={{
-            source: { uri: poster },
-            // resizeMode: "cover",
-          }}
+          
+          // Conditionally include the poster prop
+          {...(Platform.OS !== 'ios' && {
+            poster: { source: { uri: poster } },
+          })}
           onProgress={onProgress}
           onEnd={onEnded}
           onFullscreenPlayerWillPresent={() => onToggleFullscreen(true)}
