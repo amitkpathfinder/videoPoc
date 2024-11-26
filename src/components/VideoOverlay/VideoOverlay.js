@@ -11,6 +11,7 @@ const VideoOverlay = () => {
   const [fullscreen, setFullscreen] = useState(false);
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
 
   // Load the video list from backend.json
   // useEffect(() => {
@@ -71,6 +72,7 @@ const VideoOverlay = () => {
         onDurationChange={setVideoDuration}
         paused={paused}
         fullscreen={fullscreen}
+        onProgress={setCurrentTime}
       />
 
       {/* Overlay Controls */}
@@ -87,7 +89,7 @@ const VideoOverlay = () => {
           <TouchableOpacity onPress={toggleFullscreen}>
             <Text style={styles.controlText}>{fullscreen ? 'Exit Fullscreen' : 'Go FullScreen'}</Text>
           </TouchableOpacity>
-          <Text style={styles.controlText}>Duration: {videoDuration.toFixed(2)} seconds</Text>
+          <Text style={styles.controlText}>Duration: {videoDuration.toFixed(2)}/{currentTime.toFixed(2)} seconds</Text>
         </View>
         <View style={styles.navigation}>
           <TouchableOpacity

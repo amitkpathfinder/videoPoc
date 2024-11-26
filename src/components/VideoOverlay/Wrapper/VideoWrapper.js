@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import VideoPlayer from '../Player';
 
-const VideoWrapper = ({paused=false, fullscreen=false,  onDurationChange, src, poster}) => {
+const VideoWrapper = ({paused=false, fullscreen=false,  onDurationChange, src, poster, onProgress}) => {
   
   const [isPaused, setIsPaused] = useState(paused);
   const [duration, setDuration] = useState(0);
@@ -49,7 +49,7 @@ const VideoWrapper = ({paused=false, fullscreen=false,  onDurationChange, src, p
       isFullscreen={isFullscreen}
       showControls={showControls}
       onLoad={handleLoad}
-      onProgress={handleProgress}
+      onProgress={onProgress}
       onSeek={handleSeek}
       onToggleFullscreen={handleToggleFullscreen}
       onDoubleTapSeekForward={handleDoubleTapSeekForward}

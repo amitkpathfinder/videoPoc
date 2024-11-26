@@ -69,7 +69,7 @@ console.log('posterUrl',poster);
           {...(Platform.OS !== 'ios' && {
             poster: { source: { uri: poster } },
           })}
-          onProgress={onProgress}
+          onProgress={(data) => onProgress(data.currentTime)}
           onEnd={onEnded}
           onFullscreenPlayerWillPresent={() => onToggleFullscreen(true)}
           onFullscreenPlayerWillDismiss={() => onToggleFullscreen(false)}
