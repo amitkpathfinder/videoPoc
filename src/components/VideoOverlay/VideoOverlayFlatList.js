@@ -51,18 +51,23 @@ const VideoOverlayFlatList = () => {
     setPaused((prev) => !prev);
   };
 
+  const handleOnLoad = ({ duration }) => {
+    setVideoDuration(duration);
+  }
+
   const renderVideoItem = ({ item, index }) => (
     <View style={[styles.videoContainer, fullscreen && styles.fullscreen]}>
       <TouchableWithoutFeedback onPress={togglePlayPause}>
         <View>
             <VideoWrapper
+                id={item.id}
                 src={item.video}
                 poster={item.poster}
                 paused={index !== currentIndex || paused}
-                onDurationChange={setVideoDuration}
-                fullscreen={fullscreen}
+                onLoad={handleOnLoad}
                 onProgress={setCurrentTime}
             />  
+            
             <View style={styles.overlayBox}>
                 <View style={styles.contentContainer}>
                 <Text style={styles.heading}>{item.heading}</Text>
