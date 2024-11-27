@@ -10,7 +10,7 @@ const VideoPlayer = ({
   onLoad,
   showControls,
   showSeekIndicator,
-  progress,
+  onProgress,
   onEnded,
   onDoubleTapSeekForward,
   onDoubleTapSeekBackward,
@@ -91,6 +91,25 @@ const VideoPlayer = ({
     }
   }, [isPaused]);
 
+
+  useEffect(() => {
+        if (videoRef.current) {
+      const handleTimeUpdate = () => {
+        const time = videoRef.current.currentTime; // Get current playback time
+        onProgress(time); // Trigger the onProgress callback
+      };
+
+      // Add the event listener
+      videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+
+      // Cleanup event listener on unmount
+      return () => {
+        videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+      };
+    }
+  }, [onProgress]);
+
+
   // Fullscreen toggle
   const toggleFullScreen = useCallback(() => {
     if (onFullscreenToggle) onFullscreenToggle();
@@ -120,6 +139,7 @@ const VideoPlayer = ({
         src={src}
         poster={poster}
         controls={false}
+        // onProgress={(data) => onProgress(data.currentTime)}
         autoPlay
         playsInline
         muted
