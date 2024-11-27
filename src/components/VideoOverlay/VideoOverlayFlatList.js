@@ -14,7 +14,8 @@ const VideoOverlayFlatList = () => {
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const response = await fetch('http://192.168.1.15:8080/backend.json');
+    //   const response = await fetch('http://192.168.1.15:8080/backend.json');
+      const response = await fetch('http://10.112.4.67:8080/backend.json');
       const data = await response.json();
       setVideos(data);
     };
