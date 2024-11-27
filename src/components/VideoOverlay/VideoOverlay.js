@@ -6,32 +6,30 @@ import VideoWrapper from './Wrapper/VideoWrapper';
 // const { width } = Dimensions.get('window');
 
 const VideoOverlay = () => {
-  const [paused, setPaused] = useState(true);
-  const [videoDuration, setVideoDuration] = useState(0);
-  const [fullscreen, setFullscreen] = useState(false);
   const [videos, setVideos] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [paused, setPaused] = useState(true);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
 
-  // Load the video list from backend.json
-  // useEffect(() => {
-  //   setVideos(backendData);
-  // }, []);
-
+  //Getting Video urls and information
   useEffect(() => {
     console.log('VideoOverlay:Loading video list');
     const fetchVideos = async () => {
-        const response = await fetch('http://10.112.4.67:8080/backend.json');
+        const response = await fetch('http://192.168.1.15:8080/backend.json');
         const data = await response.json();
         setVideos(data);
     };
     fetchVideos();
 }, []);
 
+  // Toggle Play and Pause
   const togglePlayPause = () => setPaused((prev) => !prev);
+  // Toggle Custom Fullscreen Functionality
   const toggleFullscreen = () => setFullscreen((prev) => !prev);
 
-
+  // Swipe to next previous video
   const handleSwipe = (direction) => {
     if (direction === 'left' && currentIndex < videos.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -55,6 +53,7 @@ const VideoOverlay = () => {
     },
   });
 
+  // Loading state if no video
   if (videos.length === 0) {
     return <Text>Loading...</Text>;
   }
@@ -63,8 +62,9 @@ const VideoOverlay = () => {
   const currentVideo = videos[currentIndex];
 
   return (
-    <View style={[styles.container, fullscreen ? styles.containerFull : '']} {...panResponder.panHandlers}>
-      
+    <View 
+      style={[styles.container, fullscreen ? styles.containerFull : '']} 
+        {...panResponder.panHandlers}>
       {/* Video Player */}
       <VideoWrapper
         src={currentVideo.video}

@@ -30,7 +30,9 @@ const VideoPlayer = ({
   onEnded,
 }) => {
   const videoRef = useRef(null);
-console.log('posterUrl',poster);
+  useEffect(() => {
+    console.log('posterUrl', poster);
+  }, [poster]); 
   // useEffect(() => {
   //   if (showControls && onTogglePlayPause) {
   //     const timeout = setTimeout(() => onTogglePlayPause(false), 3000);
